@@ -1,0 +1,134 @@
+@startuml
+
+left to right direction
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.4.0
+!includeurl ICONURL/common.puml
+' иконка облака для внешних источников
+!includeurl ICONURL/font-awesome-5/cloud.puml
+' иконка db для внешних источников
+!includeurl ICONURL/font-awesome-5/database.puml
+' иконка таблицы для внутренних объектов
+!includeurl ICONURL/font-awesome-5/table.puml
+' иконка шестеренок для процессинга
+!includeurl ICONURL/font-awesome-5/cogs.puml
+' иконка для промежуточных наборов данных
+!includeurl ICONURL/font-awesome-5/spinner.puml
+' иконка для обозначения визуализации
+!includeurl ICONURL/font-awesome-5/chart_bar.puml
+' иконка круга для цветовой легенды
+!includeurl ICONURL/font-awesome-5/circle.puml
+
+
+!define _CS          scale=0.5   /' масштаб для иконок '/
+!define _ext_scr_clr RoyalBlue   /' цвет иконок для внешних источников '/
+!define _int_scr_clr YellowGreen /' цвет иконок для внутренних источников '/
+!define _int_bfr_clr DarkGrey    /' цвет иконок для промежуточных наборов данных '/
+!define _prc_clr     GoldenRod   /' цвет иконок для процессинга '/
+!define _viz_clr     IndianRed   /' цвет иконок для визуализации '/
+!define _cng_prc     LightBlue   /' цвет обозначения изменения в алгоритмах '/
+!define _del_attr    #FF6655     /' цвет обозначения удаления атрибута '/
+!define _add_attr    gold        /' цвет обозначения добавления атрибута '/
+' определение сущностей формирования DFD
+'!define ext_src_cld(_alias, _desc) ENTITY(rectangle,_ext_scr_clr,cloud{_CS}, _desc, _alias, FA5 CLOUD) <<roundRect>>
+'!define ENTITY(e_type,e_color,e_sprite,e_label,e_alias,e_stereo) e_type "<color:e_color><$e_sprite></color>\r e_label" as e_alias <<e_stereo>>
+!define ext_src_cld(_alias, _desc) rectangle "<color:_ext_scr_clr><$cloud{_CS}></color> _desc" as _alias <<roundRect>>
+!define ext_src_cld(_alias, _desc, _url) rectangle "<color:_ext_scr_clr><$cloud{_CS}></color> [[_url _desc]]" as _alias <<roundRect>>
+!define ext_src_db(_alias, _desc) rectangle "<color:_ext_scr_clr><$database{_CS}></color> _desc" as _alias <<roundRect>>
+!define ext_src_db(_alias, _desc, _url) rectangle "<color:_ext_scr_clr><$database{_CS}></color> [[_url _desc]]" as _alias <<roundRect>>
+!define int_src_tbl(_alias, _desc) rectangle "<color:_int_scr_clr><$table{_CS}></color> _desc" as _alias
+!define int_src_tbl(_alias, _desc, _url) rectangle "<color:_int_scr_clr><$table{_CS}></color> [[_url _desc]]" as _alias
+!define int_buffer(_alias, _desc) rectangle "<color:_int_bfr_clr><$spinner{_CS}></color> _desc" as _alias
+!define int_buffer(_alias, _desc, _url) rectangle "<color:_int_bfr_clr><$spinner{_CS}></color> [[_url _desc]]" as _alias
+!define visualization(_alias, _desc) rectangle "<color:_viz_clr><$chart_bar{_CS}></color> _desc" as _alias
+!define visualization(_alias, _desc, _url) rectangle "<color:_viz_clr><$chart_bar{_CS}></color> [[_url _desc]]" as _alias
+!define process(_alias, _desc) usecase "<color:_prc_clr><$cogs{_CS}></color> \n _desc \n " as _alias
+!define process(_alias, _desc, _url) usecase "<color:_prc_clr><$cogs{_CS}></color> \n \n [[_url _desc]] \n \n \n " as _alias
+
+skinparam rectangle {
+  roundCorner 0
+  roundCorner<<roundRect>> 25
+  'Покраска прямоугольников цветом <<метка>> цвет {либо имя из стандартной библиотеки, либо hex-код}
+  BackgroundColor<<rectColorGold>> _add_attr 
+  BackgroundColor<<rectColorDelAtr>> _del_attr
+  FontColor<<rectFontColorGreen>> Green
+  FontStyle<<rectFontStyleBold>> bold
+}
+
+skinparam usecase {
+  'Покраска овалов цветом <<метка>> цвет {либо имя из стандартной библиотеки, либо hex-код}
+  BackgroundColor<<circleColorChangeProcess>> _cng_prc 
+  BackgroundColor<<circleColorCoral>> #FF6655
+  FontColor<<circleFontColorGreen>> Green
+  FontStyle<<circleFontStyleBold>> bold
+}
+
+skinparam legend {
+  BackGroundColor LightYellow
+  FontSize 20
+  Margin 30
+  Padding 50
+}
+
+legend top left
+<color:_ext_scr_clr><$cloud{_CS}></color> Внешние источники данных веб
+<color:_ext_scr_clr><$database{_CS}></color> Внешние источники данных БД в контуре СМ
+<color:_int_bfr_clr><$spinner{_CS}></color> Внутренние промежуточные несохраняемые наборы данных (cte, временные таблицы и пр.)
+<color:_int_scr_clr><$table{_CS}></color> Внутренние наборы данных (таблицы, вьюхи)
+<color:_prc_clr><$cogs{_CS}></color> Шаги обработки данных
+<color:_viz_clr><$chart_bar{_CS}></color> Визуализация данных
+----
+<color:_cng_prc><$circle{_CS}></color> Изменнеие процессов
+<color:_del_attr><$circle{_CS}></color> Обозначение удаления атрибута
+<color:_add_attr><$circle{_CS}></color> Обозначение добавление сущности
+end legend
+
+ext_src_cld(_ga2, "Google Analytics2") <<rectColorGold>>
+process(_proc_ga2, "Обработка\nданных2")
+int_src_tbl(_google_session_df2, "paprod._google_session_data_full2")
+process(_proc_session_funnel2, "Воронка по поиску:\nдата, ключ.слово, кол-во\nсессий по поиску, кол-во\nнажатий на карточки из\nпоиска, отношение\nпоследнего к\nпрелпрследнему2")
+process(_proc_session_chose_date2, "Выбор даты,\nместоположения,\nключевого слова и\nкол-во сессий по\nнулевым выдачам\nпо ДВ и МВ2") <<circleColorChangeProcess>>
+int_src_tbl(_dp_search_funnel2, "data.dp_search_funnel2")
+int_src_tbl(_dp_empty_search_result2, "data.dp_empty_search_result2")
+process(_proc_cnt_conversion2, "Подсчет\nконверсии по\nдням из\nпоиска в\nтовар2")
+process(_proc_agg_releases2, "Агреграгация по\nдатам доли\nнулевых\nвыдач2")
+process(_proc_cnt_funnel2, "Подсчет\nворонки по\nпоисковой\nфразе2")
+process(_proc_agg_by_search_phrase2, "Агрегация по\nпоисковой\nфразе2")
+process(_proc_agg_by_search_phrase_city2, "Агрегация по\nпоисковой\nфразе и городу2")
+int_buffer(_conversion_by_day2, "График конверсии по дням2")<<rectFontColorGreen>> <<rectFontStyleBold>>
+int_buffer(_prcnt_zero_releases2, "Доля нулевых выдач2")
+int_buffer(_fuennel_by_search_phrase2, "Связанная воронка по\nпоисквой фразе2")
+int_src_tbl(_tbl_zero_releases2, "Таблица нулевые выдачи2")
+int_src_tbl(_tbl_zero_releases_by_city2, "Таблица нулевые выдачи\nпо городам2")
+process(_proc_agg_dashboard2, "Объединение\nв 1 дашборд2")
+visualization(_dash_for_search2, "Дашборд по поиску2")
+ext_src_db(_pers_gate_data2, "PersGate2") <<rectColorDelAtr>> <<rectFontColorGreen>>
+process(_proc_pg2, "Обработка\nданных2")
+int_src_tbl(_inter_pg_search_get_result_main_v42, "paprod.inter_pg_search_get_result_main_v42", "https://confluence.app.local/pages/viewpage.action?pageId=375465616")
+
+_ga2 --> _proc_ga2
+_proc_ga2 --> _google_session_df2
+_google_session_df2 --> _proc_session_funnel2
+_google_session_df2 --> _proc_session_chose_date2
+_proc_session_funnel2 --> _dp_search_funnel2
+_proc_session_chose_date2 --> _dp_empty_search_result2
+_dp_search_funnel2 --> _proc_cnt_conversion2
+_dp_search_funnel2 --> _proc_agg_releases2
+_dp_search_funnel2 --> _proc_cnt_funnel2
+_dp_empty_search_result2 --> _proc_agg_releases2
+_dp_empty_search_result2 --> _proc_agg_by_search_phrase2
+_dp_empty_search_result2 --> _proc_agg_by_search_phrase_city2
+_proc_cnt_conversion2 --> _conversion_by_day2
+_proc_agg_releases2 --> _prcnt_zero_releases2
+_proc_cnt_funnel2 --> _fuennel_by_search_phrase2
+_proc_agg_by_search_phrase2 --> _tbl_zero_releases2
+_proc_agg_by_search_phrase_city2 --> _tbl_zero_releases_by_city2
+_conversion_by_day2 --> _proc_agg_dashboard2
+_prcnt_zero_releases2 --> _proc_agg_dashboard2
+_fuennel_by_search_phrase2 --> _proc_agg_dashboard2
+_tbl_zero_releases2 --> _proc_agg_dashboard2
+_tbl_zero_releases_by_city2 --> _proc_agg_dashboard2
+_proc_agg_dashboard2 --> _dash_for_search2
+_pers_gate_data2 --> _proc_pg2
+_proc_pg2 --> _inter_pg_search_get_result_main_v42
+_inter_pg_search_get_result_main_v42 --> _proc_agg_dashboard2
+@enduml
